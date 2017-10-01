@@ -5,8 +5,7 @@ class FSM {
      */
     constructor(config) {
       this.config = config;
-      this.state = this.config.initial;
-      this.statesList = config.states;
+      this.state = config.initial;
     }
 
     /**
@@ -22,7 +21,7 @@ class FSM {
      * @param state
      */
     changeState(state) {
-      if (state in this.statesList) {
+      if (state in this.config.states) {
         this.prevState = this.state;
         this.state = state;
       } else {
@@ -35,10 +34,10 @@ class FSM {
      * @param event
      */
     trigger(event) {
-      var transitionsObj = this.statesList[this.state].transitions
-      if (event in transitionsObj) {
+      var transitions = this.config.states[this.state].transitions
+      if (event in transitions) {
           this.prevState = this.state;
-          this.state = transitionsObj[event];
+          this.state = transitions[event];
       } else {
         throw new Error('Данное событие отсутствует');
       }
@@ -58,12 +57,13 @@ class FSM {
      * @returns {Array}
      */
     getStates(event) {
-      var allStates = Object.keys(this.statesList),
+      var allStates = Object.keys(this.config.states),
+          length = allStates.length,
           appropriateStates = [];
       if (!event) return allStates;
-      for (var i = 0; i < allStates.length; i++) {
-        var transitionsObj = this.statesList[ allStates[i] ].transitions;
-        if (event in transitionsObj) {
+      for (var i = 0; i < length; i++) {
+        var transitions = this.config.states[ allStates[i] ].transitions;
+        if (event in transitions) {
           appropriateStates.push( allStates[i] );
         }
       }
